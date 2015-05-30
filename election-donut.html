@@ -1,0 +1,242 @@
+<head> 
+   <link rel="stylesheet" type="text/css" href="../pykcharts.1.1.0.min.css">
+  <script src="../pykcharts.1.1.0.min.js"></script>
+</head>
+<body>
+  <div id="my_chart"></div>
+  <script>
+
+
+
+
+var town = {
+   name: "sevilla",
+   census: 100, 
+   votes: 90, 
+   null_votes: 10, 
+   blank_votes: 10, 
+   scrutinized: 100, 
+   parties: [
+   {
+      acronym: "pp",
+      name: "partido popular",
+      color_id: "(22,22,22)",
+      votes: 30,
+      seats: 1,
+   },
+   {
+      acronym: "iu",
+      name: "izquierda unida",
+      color: "(100,22,100)",
+      votes: 3,
+      seats: 3,
+   }
+   ]
+};
+
+
+
+function numberOfSeatsCalculator (town) {
+   var seats = 0;
+   for (var i = 0; i < town.parties.length; i++) {
+      seats += town.parties[i].seats; 
+   }
+   return seats;
+}
+
+console.log(numberOfSeatsCalculator(town));
+
+
+
+function minimumPercentagePartiesCalculator (town) {
+   minimumPercentageParties = [];
+   for (var i = 0; i < town.parties.length; i++) {
+      if (town.parties[i].votes >= town.votes/20) {
+         minimumPercentageParties.push(town.parties[i]);    
+      }
+   }
+   return minimumPercentageParties;
+} 
+
+console.log(minimumPercentagePartiesCalculator(town));
+
+
+function calculate_cyphers (town) {
+   var cyphers = [];
+
+}
+
+function createPartiesWithCyphers (town) {
+   var partiesWithCyphers = [];
+   for (var i = 0; i < town.parties.length; i++) {
+      for (var j = 1; j <= numberOfSeatsCalculator (town); j++) {
+         partyWithCyphers = {party: town.parties[i].name, cypher: town.parties[i].votes/j}
+         partiesWithCyphers.push(partyWithCyphers);
+      }
+   }
+   return partiesWithCyphers;
+}
+
+
+
+var chairsToAssing = numberOfSeatsCalculator(town);
+
+function createPartiesWithSeats (town) {
+   var partiesWithSeats = {};
+   for (var i = 0; i < town.parties.length; i++) {
+      partiesWithSeats[town.parties[i].name] = 0;
+   }
+   return partiesWithSeats;
+}
+
+console.log(town);
+console.log(createPartiesWithSeats(town));
+
+
+
+function calculatePartiesWithSeats (town) {
+   var partiesWithSeats = createPartiesWithSeats(town);
+   var partiesWithCyphers = createPartiesWithCyphers(town);
+   for (var i = 1; i <= chairsToAssing; i++) {
+      var max_cypher = Math.max.apply(Math,partiesWithCyphers.map(function(o){return o.cypher;}));
+      for(var j = 0; j < partiesWithCyphers.length; j++) {
+         if (partiesWithCyphers[j].cypher === max_cypher) {
+            partiesWithSeats[partiesWithCyphers[j].party] += 1;
+            partiesWithCyphers[j].cypher = -1;
+         }
+      }
+   }
+   return partiesWithSeats;
+}
+
+function createNewTown (town) {
+   var newTown = town;
+   var parkingWithSeats = calculatePartiesWithSeats(town);
+   console.log();
+   for(var i = 0; i < Object.keys(parkingWithSeats).length; i++) {
+      for (var j=0; j<newTown.parties.length; j++) {
+         if (newTown.parties[j].name === Object.keys(parkingWithSeats)[i]) {
+            newTown.parties[j].seats = parkingWithSeats[Object.keys(parkingWithSeats)[i]];
+         }
+      }
+   }
+   return newTown;
+}
+
+
+
+console.log(createNewTown(town));
+
+
+
+
+function createDonutData (town) {
+   var newTown = createNewTown(town);
+   var donutData = [];
+   var dataChunk = {};
+   var null_votes = {"name": "nulos", "weight": newTown.null_votes};
+   var blank_votes = {"name": "blancos", "weight": newTown.blank_votes};
+   for (var i = 0; i < newTown.parties.length; i++) {
+      dataChunk = {"name": newTown.parties[i].acronym, "weight": newTown.parties[i].seats};
+      donutData.push(dataChunk);
+   }
+   donutData.push(null_votes);
+   donutData.push(blank_votes);
+   return donutData;
+}
+
+
+console.log(createDonutData(town));
+
+
+
+
+   window.PykChartsInit = function (e) {
+   var k = new PykCharts.oneD.electionDonut({
+
+      //Chart container id
+      "selector": "#my_chart",
+
+      //Data file path
+      "data": createDonutData(town),
+
+      //Chart mode 
+      "mode": "default",
+
+      //Chart size parameters
+      "chart_width": 620,
+      "chart_height": 500,
+
+      //Chart color parameter
+      "color_mode": "shade",
+      "shade_color": "#255AEE",
+      "chart_color": [
+      "#255AEE"
+      ],
+
+      //Chart pointer parameters
+      "pointer_overflow_enable": "yes",
+      "pointer_thickness": 1,
+      "pointer_family": "Helvetica Neue,Helvetica,Arial,sans-serif",
+      "pointer_size": 13,
+      "pointer_weight": "normal",
+
+      //Chart highlight parameters
+      "highlight": "Production",
+      "highlight_color": "#08306b",
+
+      //Chart label parameters
+      "label_size": 13,
+      "label_weight": "normal",
+      "label_family": "Helvetica Neue,Helvetica,Arial,sans-serif",
+
+      //Realtime data parameters
+      "real_time_charts_last_updated_at_enable": "no",
+      "real_time_charts_refresh_frequency": 0,
+
+      //Chart border parameters
+      "border_between_chart_elements_thickness": 1,
+      "border_between_chart_elements_style": "solid",
+
+      //Clubdata parameters
+      "clubdata_enable": "yes",
+      "clubdata_text": "Others",
+      "clubdata_maximum_nodes": 5,
+
+      //Chart-interactive parameters
+      "chart_onhover_highlight_enable": "yes",
+      "tooltip_enable": "yes",
+      "transition_duration": 0,
+
+      //Other parameters
+      "donut_radius_percent": 70,
+      "donut_inner_radius_percent": 40,
+      "donut_show_total_at_center": "yes",
+      "donut_show_total_at_center_size": 14,
+      "donut_show_total_at_center_color": "#1D1D1D",
+      "donut_show_total_at_center_weight": "bold",
+      "donut_show_total_at_center_family": "Helvetica Neue,Helvetica,Arial,sans-serif",
+
+      //Chart title parameters
+      "title_text": "Enter title here",
+      "title_size": 2,
+      "title_weight": "bold",
+      "title_family": "Helvetica Neue,Helvetica,Arial,sans-serif",
+      "title_color": "#1D1D1D",
+
+      //Chart subtitle parameters
+      "subtitle_text": "Enter subtitle here",
+      "subtitle_size": 1,
+      "subtitle_weight": "normal",
+      "subtitle_family": "Helvetica Neue,Helvetica,Arial,sans-serif",
+      "subtitle_color": "black",
+
+      //Credits parameters
+      "credit_my_site_name": "PykCharts",
+      "credit_my_site_url": "http://pykcharts.com"
+   });
+   k.execute();
+  }
+   </script>
+</body>
+
