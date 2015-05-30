@@ -3,6 +3,7 @@ class TownsController < ApplicationController
 		towns = Town.all
 
 		respond_to do |format|
+		  headers['Access-Control-Allow-Origin'] = '*'
       format.json{ render json: towns, include: :parties}
 		end
 	end
@@ -11,6 +12,7 @@ class TownsController < ApplicationController
 		town = Town.find_by town_code: params[:id]
 
 		respond_to do |format|
+			headers['Access-Control-Allow-Origin'] = '*'
       format.json{ render json: town, include: :parties}
 		end
 	end
