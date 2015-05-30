@@ -22,6 +22,12 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 gem 'smarter_csv'
 
+gem "chartkick"
+
+gem 'groupdate'
+
+
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 

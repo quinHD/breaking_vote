@@ -1,0 +1,32 @@
+<h1>SHOW</h1>
+
+<%= @town.town_code %>
+<%= @town.region_code %>
+<%= @town.name %>
+<%= @town.population %>
+<%= @town.census %>
+<%= @town.votes %>
+<%= @town.null_votes %>
+<%= @town.blank_votes %>
+<%= @town.scrutinized %>
+<%= hash = Hash.new%>
+<% @town.parties.each do |party|%>
+	<div>
+		<%= party.color %>
+		<%= party.town_code %>
+		<%= party.party_code %>
+		<%= party.acronym %>
+		<%= party.name %>
+		<%= party.votes %>
+		<%= party.seats %>
+		<% hash[party.name] = party.votes%>
+	</div>
+
+<% end%>
+
+
+<%= pie_chart(hash) %>
+
+
+
+
