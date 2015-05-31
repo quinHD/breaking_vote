@@ -11,7 +11,7 @@ class TownsController < ApplicationController
 	end
 
 	def show
-		@town = Town.find_by town_code: params[:id]
+		@town = Town.where("lower(name) = ?", params[:id].downcase).first
 
 		respond_to do |format|
 			headers['Access-Control-Allow-Origin'] = '*'
